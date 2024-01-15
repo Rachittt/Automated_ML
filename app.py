@@ -23,9 +23,16 @@ if uploaded_file is not None:
     # Display the data
     st.dataframe(df)
 
+    # Select target column
+    target_col = st.selectbox("Select the target column:", df.columns)
+
+    # Drop columns
+    cols_to_drop = st.multiselect("Select columns to drop:", df.columns)
+    df = df.drop(cols_to_drop, axis=1)
+
     if st.button("Proceed"):
-      # Switch to a new page for model building options
-      st.session_state.df = df  # Store the dataframe in session state
+      st.session_state.df = df  # Store the updated dataframe
+      st.session_state.target_col = target_col  # Store the target column
       st.session_state.page = "model_options"
 
   except Exception as e:
