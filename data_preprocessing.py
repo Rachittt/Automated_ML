@@ -24,6 +24,7 @@ def preprocess_data(df, target_column):
     X = df.drop(target_column, axis=1)  # Adjust 'target_column' based on your dataset
     y = df[target_column]
 
+    df.to_csv('download/preprocessed_data.csv', index=False)
     return df, X, y
 
 
@@ -49,7 +50,7 @@ def scale_encode_split(X, y):
 
 def save_preprocessed_data(X_train, X_test, y_train, y_test):
     # Save the preprocessed data to files or databases for future use
-    X_train.to_csv('X_train.csv', index=False)
-    X_test.to_csv('X_test.csv', index=False)
-    y_train.to_csv('y_train.csv', index=False)
-    y_test.to_csv('y_test.csv', index=False)
+    X_train.to_csv('download/X_train.csv', index=False)
+    X_test.to_csv('download/X_test.csv', index=False)
+    y_train.to_csv('download/y_train.csv', index=False)
+    y_test.to_csv('download/y_test.csv', index=False)

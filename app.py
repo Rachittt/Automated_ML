@@ -7,7 +7,7 @@ from hyperparameter_tuning import *
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Title and instructions
-st.title("Upload Your Dataset")
+st.title("Machine Learning App")
 st.write("Choose a dataset in CSV, Excel, JSON, or other common formats.")
 
 # File uploader
@@ -50,23 +50,24 @@ if uploaded_file is not None:
 if "page" in st.session_state and st.session_state.page == "model_options":
   st.title("Choose an Action")
 
-  # if st.button("Visualize Data"):
-  #   with st.spinner('Please Wait...'):
-  #     descriptive_analysis(df)
-  #     visualize_data(df)
   df = st.session_state.df
   target_column = st.session_state.target_column
   
-  if st.button("Build Regression Model"):
+  if st.button("Build Regression Model", key='reg_model'):
     with st.spinner('Please Wait...'):
       df, X, y = preprocess_data(df, target_column)
       X_train, X_test, y_train, y_test = scale_encode_split(X, y)
+      save_preprocessed_data(X_train, X_test, y_train, y_test)
       best_model, best_model_name, best_model_score = tune_regression_model(X_train, y_train)
-      final_model(X, y, best_model, model_name='model.joblib')
+      st.write("Best Model is: " + best_model_name)
+      print_regression_scores(best_model, X_test, y_test)
+      final_model(X, y, best_model)
 
-  elif st.button("Build Classification Model"):
+  elif st.button("Build Classification Model", key='cla_model'):
     with st.spinner('Please Wait...'):
       df, X, y = preprocess_data(df, target_column)
       X_train, X_test, y_train, y_test = scale_encode_split(X, y)
+      save_preprocessed_data(X_train, X_test, y_train, y_test)
       best_model, best_model_name, best_model_score = tune_classification_model(X_train, y_train)
-      final_model(X, y, best_model, model_name='model.joblib')
+      print_classification_scores(best_model, X_test, y_test)
+      final_model(X, y, best_model)

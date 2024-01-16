@@ -1,4 +1,6 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.linear_model import LinearRegression, LogisticRegression
@@ -7,6 +9,9 @@ from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from xgboost import XGBRegressor, XGBClassifier
 import joblib
+import streamlit as st
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 
 
 # Function for regression model hyperparameter tuning
@@ -14,11 +19,11 @@ def tune_regression_model(X_train, y_train):
     # Regression Models
     regression_models = {
         'Linear Regression': LinearRegression(),
-        'Random Forest Regressor': RandomForestRegressor(),
-        'Decision Tree Regressor': DecisionTreeRegressor(),
-        'Support Vector Regressor': SVR(),
-        'K-Neighbors Regressor': KNeighborsRegressor(),
-        'XGBoost Regressor': XGBRegressor()
+        # 'Random Forest Regressor': RandomForestRegressor(),
+        # 'Decision Tree Regressor': DecisionTreeRegressor(),
+        # 'Support Vector Regressor': SVR(),
+        # 'K-Neighbors Regressor': KNeighborsRegressor(),
+        # 'XGBoost Regressor': XGBRegressor()
     }
 
     best_model_name = None
@@ -44,11 +49,11 @@ def tune_classification_model(X_train, y_train):
     # Classification Models
     classification_models = {
         'Logistic Regression': LogisticRegression(),
-        'Random Forest Classifier': RandomForestClassifier(),
-        'Decision Tree Classifier': DecisionTreeClassifier(),
-        'Support Vector Classifier': SVC(),
-        'K-Neighbors Classifier': KNeighborsClassifier(),
-        'XGBoost Classifier': XGBClassifier()
+        # 'Random Forest Classifier': RandomForestClassifier(),
+        # 'Decision Tree Classifier': DecisionTreeClassifier(),
+        # 'Support Vector Classifier': SVC(),
+        # 'K-Neighbors Classifier': KNeighborsClassifier(),
+        # 'XGBoost Classifier': XGBClassifier()
     }
 
     best_model_name = None
@@ -104,6 +109,40 @@ def get_classification_param_grid(model_name):
         raise ValueError(f"Unsupported classification model: {model_name}")
 
 
-def final_model(X, y, best_model, model_name='model.joblib'):
+def print_regression_scores(model, X_test, y_test):
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Calculate and print various regression scores
+    mse = mean_squared_error(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    st.write(f"Mean Squared Error (MSE): {round(mse, 2)}")
+    st.write(f"Mean Absolute Error (MAE): {round(mae, 2)}")
+    st.write(f"R-squared (R2): {round(r2, 2)}")
+    # print(f"Mean Squared Error (MSE): {mse:.4f}")
+    # print(f"Mean Absolute Error (MAE): {mae:.4f}")
+    # print(f"R-squared (R2): {r2:.4f}")
+
+
+def print_classification_scores(model, X_test, y_test):
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    confusion_mat = confusion_matrix(y_test, y_pred)
+
+    sns.heatmap(confusion_mat, annot=True)
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    st.pyplot()
+    plt.savefig('download/confusion_matrix.png')
+
+    # st.write("Classification Report")
+    st.text('Model Report:\n ' + classification_report(y_test, y_pred))
+
+
+def final_model(X, y, best_model):
     model = best_model.fit(X, y)
-    joblib.dump(model, model_name)
+    joblib.dump(model, 'download/model.joblib')
