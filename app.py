@@ -1,8 +1,12 @@
+import os
 import streamlit as st
 import pandas as pd
 from data_analysis import *
 from data_preprocessing import *
 from hyperparameter_tuning import *
+import zipfile
+from pathlib import Path
+
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -36,6 +40,7 @@ if uploaded_file is not None:
     target_column = st.selectbox("Select the target column:", df.columns)
 
     if st.button("Proceed and Visualize Data"):
+      Path("download").mkdir(parents=True, exist_ok=True)
       st.session_state.df = df  # Store the updated dataframe
       st.session_state.target_column = target_column  # Store the target column
       st.session_state.page = "model_options"
@@ -62,6 +67,7 @@ if "page" in st.session_state and st.session_state.page == "model_options":
       st.write("Best Model is: " + best_model_name)
       print_regression_scores(best_model, X_test, y_test)
       final_model(X, y, best_model)
+      st.session_state.page = "download_options"
 
   elif st.button("Build Classification Model", key='cla_model'):
     with st.spinner('Please Wait...'):
@@ -71,3 +77,61 @@ if "page" in st.session_state and st.session_state.page == "model_options":
       best_model, best_model_name, best_model_score = tune_classification_model(X_train, y_train)
       print_classification_scores(best_model, X_test, y_test)
       final_model(X, y, best_model)
+      st.session_state.page = "download_options"
+
+
+# New page for download options
+if "page" in st.session_state and st.session_state.page == "download_options":
+  # Checkbox selection
+  files_to_download = st.multiselect(
+    "Select files to download:",
+    [
+      "All Files",
+      "preprocessed_data.csv",
+      "X_train.csv",
+      "X_test.csv",
+      "y_train.csv",
+      "y_test.csv",
+      "describe.png",
+      "plots.png",
+      "model.joblib",
+    ]
+  )
+
+  all_files = [
+    "preprocessed_data.csv",
+    "X_train.csv",
+    "X_test.csv",
+    "y_train.csv",
+    "y_test.csv",
+    "describe.png",
+    "plots.png",
+    "model.joblib",
+  ]
+
+  # if st.download_button("Download Selected Files"):
+  with zipfile.ZipFile("download/download.zip", "w") as zipf:
+    if "All Files" in files_to_download:
+      for filename in all_files:
+        filepath = f"download/{filename}"
+        try:
+          zipf.write(filepath)
+        except FileNotFoundError:
+          st.error(f"File not found")
+    else:
+      for filename in files_to_download:
+        filepath = f"download/{filename}"
+        try:
+          zipf.write(filepath)
+        except FileNotFoundError:
+          st.error(f"File not found: {filename}")
+
+  # st.download_button("Download ZIP", "download/download.zip")
+
+  with open("download/download.zip", "rb") as file:
+    btn = st.download_button(
+            label="Download ZIP",
+            data=file,
+            file_name="download.zip",
+            mime="application/zip"
+          )

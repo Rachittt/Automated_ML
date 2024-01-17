@@ -20,7 +20,7 @@ def descriptive_analysis(df):
     #create the table plot and position it in the upper left corner
     table(plot, desc,loc='upper right')
     #save the plot as a png file
-    plt.savefig('download/desc_plot.png')
+    plt.savefig('download/describe.png')
 
 def visualize_data(df):
     # Set up subplots for numerical features
@@ -35,6 +35,6 @@ def visualize_data(df):
         plt.xlabel(column)
         plt.ylabel('Frequency')
     
+    plt.savefig('download/plots.png')
     st.subheader("Data Visualization")
     st.pyplot()
-    plt.savefig('download/plot.png')
