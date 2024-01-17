@@ -162,8 +162,5 @@ cython_debug/
 .download
 download/
 
-sales_forecasting.csv
-
-Train.csv
-
-test.ipynb
+Classification.csv
+Regression.csv
