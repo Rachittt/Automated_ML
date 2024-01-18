@@ -9,7 +9,7 @@ from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from xgboost import XGBRegressor, XGBClassifier
 import joblib
-import streamlit as st
+# import streamlit as st
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 
@@ -109,7 +109,7 @@ def get_classification_param_grid(model_name):
         raise ValueError(f"Unsupported classification model: {model_name}")
 
 
-def print_regression_scores(model, X_test, y_test):
+def print_regression_scores(model, X_test, y_test, st):
     # Make predictions
     y_pred = model.predict(X_test)
 
@@ -126,7 +126,7 @@ def print_regression_scores(model, X_test, y_test):
     # print(f"R-squared (R2): {r2:.4f}")
 
 
-def print_classification_scores(model, X_test, y_test):
+def print_classification_scores(model, X_test, y_test, st):
     # Make predictions
     y_pred = model.predict(X_test)
 

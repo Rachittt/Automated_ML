@@ -1,11 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import streamlit as st
+# import streamlit as st
 from pandas.plotting import table
 
 
-def descriptive_analysis(df):
+def descriptive_analysis(df, st):
     # Display summary statistics of the numerical features
     st.subheader("Descriptive Analysis")
     st.write(df.describe())
@@ -22,7 +22,7 @@ def descriptive_analysis(df):
     #save the plot as a png file
     plt.savefig('download/describe.png')
 
-def visualize_data(df):
+def visualize_data(df, st):
     # Set up subplots for numerical features
     num_rows = len(df.columns) // 2 + len(df.columns) % 2
     num_cols = 2
